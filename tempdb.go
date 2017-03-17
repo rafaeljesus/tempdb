@@ -18,8 +18,8 @@ var (
 
 // Tempdb stores an expiring (or non-expiring) key/value pair in Redis.
 type Tempdb interface {
-	Insert(key, value string, expires *time.Duration) error
-	Find(key string) error
+	Insert(key, value string, expires time.Duration) (err error)
+	Find(key string) (value string, err error)
 }
 
 // Options carries the different variables to tune a newly started redis client,
@@ -58,7 +58,7 @@ func NewTempdb(o Options) (tempdb Tempdb, err error) {
 }
 
 // Insert a key/value pair with an optional expiration time.
-func (t *temp) Insert(key, value string, expires *time.Duration) (err error) {
+func (t *temp) Insert(key, value string, expires time.Duration) (err error) {
 	if len(key) == 0 {
 		err = ErrKeyRequired
 		return
@@ -70,7 +70,7 @@ func (t *temp) Insert(key, value string, expires *time.Duration) (err error) {
 	}
 
 	k := fmt.Sprint("tempDB:", key)
-	err = t.Set(k, v, expires).Err()
+	err = t.Set(k, value, expires).Err()
 
 	return
 }
@@ -104,7 +104,7 @@ func newOptions(o Options) (options *redis.Options) {
 		options.Password = o.Password
 	}
 
-	if len(o.DB) != 0 {
+	if o.DB != 0 {
 		options.DB = o.DB
 	}
 
