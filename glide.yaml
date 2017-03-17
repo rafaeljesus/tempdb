@@ -1,0 +1,4 @@
+package: github.com/rafaeljesus/tempdb
+import:
+- package: gopkg.in/redis.v5
+  version: v5.2.9
