@@ -16,7 +16,7 @@ Tempdb stores an expiring (or non-expiring) key/value pair in Redis.
 ```go
 import "github.com/rafaeljesus/tempdb"
 
-temp, err := tempdb.NewTempdb(tempdb.Options{
+temp, err := tempdb.New(tempdb.Options{
   Addr: "localhost:6379",
   Password: "foo",
 })
