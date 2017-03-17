@@ -96,9 +96,11 @@ func (t *temp) Find(key string) (value string, err error) {
 func newOptions(o Options) (options *redis.Options) {
 	options = &redis.Options{}
 
-	if len(o.Addr) != 0 {
-		options.Addr = o.Addr
+	if len(o.Addr) == 0 {
+		o.Addr = "localhost:6379"
 	}
+
+	options.Addr = o.Addr
 
 	if len(o.Password) != 0 {
 		options.Password = o.Password
