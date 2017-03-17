@@ -1,0 +1,10 @@
+version: '2'
+services:
+  redis:
+    container_name: redis
+    image: redis:2.8.19
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis:/data
