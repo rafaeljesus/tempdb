@@ -5,7 +5,7 @@ import (
 )
 
 func TestInsert(t *testing.T) {
-	temp, err := NewTempdb(Options{})
+	temp, err := New(Options{})
 	if err != nil {
 		t.Errorf("Expected to initialize tempdb %s", err)
 	}
@@ -16,7 +16,7 @@ func TestInsert(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	temp, err := NewTempdb(Options{})
+	temp, err := New(Options{})
 	if err != nil {
 		t.Errorf("Expected to initialize tempdb %s", err)
 	}

@@ -46,10 +46,10 @@ type temp struct {
 	*redis.Client
 }
 
-// NewTempdb returns a new temp configured with the
+// New returns a new temp configured with the
 // variables from the options parameter, or returning an non-nil err
 // if an error ocurred while creating redis client.
-func NewTempdb(o Options) (tempdb Tempdb, err error) {
+func New(o Options) (tempdb Tempdb, err error) {
 	options := newOptions(o)
 	client := redis.NewClient(options)
 	tempdb = &temp{client}
