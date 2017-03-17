@@ -29,7 +29,7 @@ if err = temp.Insert("key2", "value", time.Hour); err != nil {
   // handle failure insert key
 }
 
-if err = temp.Get("key"); err != nil {
+if err = temp.Find("key"); err != nil {
   // handle failure to get value
 }
 
