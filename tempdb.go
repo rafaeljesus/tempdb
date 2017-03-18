@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	. "github.com/tj/go-debug"
 	"gopkg.in/redis.v5"
 	"net"
 	"time"
@@ -14,6 +15,8 @@ var (
 	ErrKeyRequired = errors.New("creating a new tempdb requires a non-empty key")
 	// ErrValueRequired is returned when value is not passed as parameter in tempdb.Config.
 	ErrValueRequired = errors.New("creating a new tempdb requires a non-empty value")
+
+	debug = Debug("single")
 )
 
 // Tempdb stores an expiring (or non-expiring) key/value pair in Redis.
@@ -72,6 +75,8 @@ func (t *temp) Insert(key, value string, expires time.Duration) (err error) {
 	k := fmt.Sprint("tempDB:", key)
 	err = t.Set(k, value, expires).Err()
 
+	debug("Saved %s/%s. Expiring in %d seconds", k, value, expires)
+
 	return
 }
 
@@ -89,6 +94,8 @@ func (t *temp) Find(key string) (value string, err error) {
 	}
 
 	err = t.Del(k).Err()
+
+	debug("Deleted %s/%s.", k, value)
 
 	return
 }

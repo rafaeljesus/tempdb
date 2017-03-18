@@ -2,3 +2,5 @@ package: github.com/rafaeljesus/tempdb
 import:
 - package: gopkg.in/redis.v5
   version: v5.2.9
+- package: github.com/tj/go-debug
+  version: v2.0.0
