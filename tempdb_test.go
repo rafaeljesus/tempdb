@@ -2,7 +2,29 @@ package tempdb
 
 import (
 	"testing"
+	"time"
 )
+
+func TestNew(t *testing.T) {
+	_, err := New(Options{
+		Network:            "foo",
+		Addr:               "localhost:6379",
+		DB:                 0,
+		MaxRetries:         1,
+		DialTimeout:        time.Second * 5,
+		ReadTimeout:        time.Second * 5,
+		WriteTimeout:       time.Second * 5,
+		PoolSize:           1,
+		PoolTimeout:        time.Second * 5,
+		IdleTimeout:        time.Second * 5,
+		IdleCheckFrequency: time.Second * 5,
+		ReadOnly:           true,
+	})
+
+	if err != nil {
+		t.Errorf("Expected to initialize tempdb %s", err)
+	}
+}
 
 func TestInsert(t *testing.T) {
 	temp, err := New(Options{})
