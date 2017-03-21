@@ -1,6 +1,7 @@
 package tempdb
 
 import (
+	"crypto/tls"
 	"testing"
 	"time"
 )
@@ -9,7 +10,8 @@ func TestNew(t *testing.T) {
 	_, err := New(Options{
 		Network:            "foo",
 		Addr:               "localhost:6379",
-		DB:                 0,
+		DB:                 1,
+		Password:           "foo",
 		MaxRetries:         1,
 		DialTimeout:        time.Second * 5,
 		ReadTimeout:        time.Second * 5,
@@ -19,6 +21,9 @@ func TestNew(t *testing.T) {
 		IdleTimeout:        time.Second * 5,
 		IdleCheckFrequency: time.Second * 5,
 		ReadOnly:           true,
+		TLSConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
 	})
 
 	if err != nil {
