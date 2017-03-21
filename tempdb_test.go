@@ -2,14 +2,18 @@ package tempdb
 
 import (
 	"crypto/tls"
+	"net"
 	"testing"
 	"time"
 )
 
 func TestNew(t *testing.T) {
 	_, err := New(Options{
-		Network:            "foo",
-		Addr:               "localhost:6379",
+		Network: "foo",
+		Addr:    "localhost:6379",
+		Dialer: func() (c net.Conn, err error) {
+			return
+		},
 		DB:                 1,
 		Password:           "foo",
 		MaxRetries:         1,

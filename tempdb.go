@@ -25,14 +25,12 @@ type Tempdb interface {
 	Find(key string) (value string, err error)
 }
 
-type dialerFunc func() (net.Conn, error)
-
 // Options carries the different variables to tune a newly started redis client,
 // it exposes the same configuration available from https://godoc.org/gopkg.in/redis.v5#Options go client.
 type Options struct {
 	Network            string
 	Addr               string
-	Dialer             dialerFunc
+	Dialer             func() (net.Conn, error)
 	Password           string
 	DB                 int
 	MaxRetries         int
@@ -149,7 +147,7 @@ func setNetwork(options *redis.Options, network string) {
 	}
 }
 
-func setDialer(options *redis.Options, dialer dialerFunc) {
+func setDialer(options *redis.Options, dialer func() (net.Conn, error)) {
 	if dialer != nil {
 		options.Dialer = dialer
 	}
