@@ -10,6 +10,10 @@ import (
 	"time"
 )
 
+const (
+	prefix = "tempdb:"
+)
+
 var (
 	// ErrKeyRequired is returned when key is not passed as parameter in tempdb.Config.
 	ErrKeyRequired = errors.New("creating a new tempdb requires a non-empty key")
@@ -72,7 +76,7 @@ func (t *temp) Insert(key, value string, expires time.Duration) (err error) {
 		return
 	}
 
-	k := fmt.Sprint("tempDB:", key)
+	k := fmt.Sprint(prefix, key)
 	err = t.Set(k, value, expires).Err()
 
 	debug("Saved %s/%s. Expiring in %d seconds", k, value, expires)
@@ -87,7 +91,7 @@ func (t *temp) Find(key string) (value string, err error) {
 		return
 	}
 
-	k := fmt.Sprint("tempDB:", key)
+	k := fmt.Sprint(prefix, key)
 	value, err = t.Get(k).Result()
 	if err != nil {
 		return
