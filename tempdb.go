@@ -4,10 +4,11 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	d "github.com/tj/go-debug"
-	"gopkg.in/redis.v5"
 	"net"
 	"time"
+
+	d "github.com/tj/go-debug"
+	"gopkg.in/redis.v5"
 )
 
 const (
