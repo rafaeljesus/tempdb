@@ -7,13 +7,39 @@ import (
 	"time"
 )
 
-func TestNew(t *testing.T) {
-	_, err := New(Options{
-		Network: "foo",
-		Addr:    "localhost:6379",
-		Dialer: func() (c net.Conn, err error) {
-			return
+func TestTempdb(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		scenario string
+		function func(*testing.T)
+	}{
+		{
+			"new",
+			testNew,
 		},
+		{
+			"insert",
+			testInsert,
+		},
+		{
+			"find",
+			testFind,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.scenario, func(t *testing.T) {
+			test.function(t)
+		})
+	}
+}
+
+func testNew(t *testing.T) {
+	_, err := New(Options{
+		Network:            "foo",
+		Addr:               "localhost:6379",
+		Dialer:             func() (c net.Conn, err error) { return },
 		DB:                 1,
 		Password:           "foo",
 		MaxRetries:         1,
@@ -31,55 +57,65 @@ func TestNew(t *testing.T) {
 	})
 
 	if err != nil {
-		t.Errorf("Expected to initialize tempdb %s", err)
+		t.Fatalf("expected to initialize tempdb: %s", err)
 	}
 }
 
-func TestInsert(t *testing.T) {
+func testInsert(t *testing.T) {
 	temp, err := New(Options{})
 	if err != nil {
-		t.Errorf("Expected to initialize tempdb %s", err)
+		t.Fatalf("expected to initialize tempdb: %s", err)
 	}
 
-	if err := temp.Insert("key", "value", 0); err != nil {
-		t.Errorf("Expected to insert key/value %s", err)
+	cases := []struct {
+		key, value string
+	}{
+		{
+			"key", "value",
+		},
+		{
+			"", "value",
+		},
+		{
+			"key", "",
+		},
 	}
 
-	if err := temp.Insert("", "value", 0); err == nil {
-		t.Fail()
-	}
-
-	if err := temp.Insert("key", "", 0); err == nil {
-		t.Fail()
+	for _, c := range cases {
+		if err := temp.Insert(c.key, c.value, 0); err != nil {
+			t.Fatalf("unexpected insert error:%v", err)
+		}
 	}
 }
 
-func TestGet(t *testing.T) {
+func testFind(t *testing.T) {
 	temp, err := New(Options{})
 	if err != nil {
-		t.Errorf("Expected to initialize tempdb %s", err)
+		t.Fatalf("expected to initialize tempdb: %v", err)
 	}
 
 	if err := temp.Insert("key", "value", 0); err != nil {
-		t.Errorf("Expected to insert key/value %s", err)
+		t.Fatalf("expected to insert key/value: %v", err)
 	}
 
-	_, err = temp.Find("")
-	if err == nil {
-		t.Fail()
+	cases := []struct {
+		key     string
+		wantErr bool
+	}{
+		{
+			"", true,
+		},
+		{
+			"invalid_key", true,
+		},
+		{
+			"key", false,
+		},
 	}
 
-	_, err = temp.Find("invalid_key")
-	if err == nil {
-		t.Fail()
-	}
-
-	value, err := temp.Find("key")
-	if err != nil {
-		t.Errorf("Expected get value %s", err)
-	}
-
-	if value != "value" {
-		t.Errorf("Expected value to be eq %s", value)
+	for _, c := range cases {
+		if _, err := temp.Find(c.key); err != nil != c.wantErr {
+			t.Fatalf("unexpected find error")
+		}
 	}
 }
