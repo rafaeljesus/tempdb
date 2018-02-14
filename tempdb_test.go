@@ -69,21 +69,29 @@ func testInsert(t *testing.T) {
 
 	cases := []struct {
 		key, value string
+		wantErr    bool
 	}{
 		{
-			"key", "value",
+			"key", "value", false,
 		},
 		{
-			"", "value",
+			"", "value", true,
 		},
 		{
-			"key", "",
+			"key", "", true,
 		},
 	}
 
 	for _, c := range cases {
-		if err := temp.Insert(c.key, c.value, 0); err != nil {
-			t.Fatalf("unexpected insert error:%v", err)
+		err := temp.Insert(c.key, c.value, 0)
+		if c.wantErr {
+			if err == nil {
+				t.Fatalf("unexpected insert return value: %v", err)
+			}
+		} else {
+			if err != nil {
+				t.Fatalf("unexpected insert return value: %v", err)
+			}
 		}
 	}
 }
@@ -114,8 +122,15 @@ func testFind(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		if _, err := temp.Find(c.key); err != nil != c.wantErr {
-			t.Fatalf("unexpected find error")
+		_, err := temp.Find(c.key)
+		if c.wantErr {
+			if err == nil {
+				t.Fatalf("unexpected find return value")
+			}
+		} else {
+			if err != nil {
+				t.Fatalf("unexpected find return value")
+			}
 		}
 	}
 }
